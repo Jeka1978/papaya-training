@@ -4,7 +4,19 @@ package com.papaya.builder;
  * @author Evgeny Borisov
  */
 public class Main {
+
+
+
+
+    public static void dox(){
+
+    }
+
+
     public static void main(String[] args) {
+
+        Main main2 = new Main();
+
 
 //
 //        PolicyService policyService2 = PolicyService.builder().numberOfAccisents(12).build();
