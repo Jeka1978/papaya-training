@@ -1,4 +1,4 @@
-package com.papaya;
+package com.papaya.java8_examples.animals;
 
 /**
  * @author Evgeny Borisov
