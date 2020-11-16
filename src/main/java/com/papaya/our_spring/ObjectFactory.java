@@ -5,8 +5,10 @@ import lombok.SneakyThrows;
 import org.reflections.Reflections;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -34,19 +36,42 @@ public class ObjectFactory {
 
     @SneakyThrows
     public <T> T createObject(Class<T> type) {
-        Class<T> implClass = resolveRealImpl(type);
+        Class<T> originalClass = resolveRealImpl(type);
 
-
-        T t = create(implClass);
-
+        T t = create(originalClass);
 
         configure(t);
 
         invokeInit(type, t);
+        // t is an object from original and it is already totally configured
+
+        if (originalClass.isAnnotationPresent(Benchmark.class)) {
+            Object proxy = Proxy.
+                    newProxyInstance(originalClass.getClassLoader(), originalClass.getInterfaces(), new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            System.out.println("*******BENCHMARK Started "+method.getName()+" *******(");
+                            long start = System.nanoTime();
+                            Object retVal = method.invoke(t, args);
+                            long end = System.nanoTime();
+                            System.out.println(end-start);
+                            System.out.println("*******BENCHMARK ended"+method.getName()+" *******(");
+                            return retVal;
+                        }
+                    });
+            return (T) proxy;
+        }
 
 
         return t;
     }
+
+
+
+
+
+
+
 
     private <T> void invokeInit(Class<T> type, T t) throws IllegalAccessException, InvocationTargetException {
         Method[] methods = type.getMethods();

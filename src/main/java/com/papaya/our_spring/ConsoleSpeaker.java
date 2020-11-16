@@ -3,6 +3,7 @@ package com.papaya.our_spring;
 /**
  * @author Evgeny Borisov
  */
+@Benchmark
 public class ConsoleSpeaker implements Speaker {
 
 
