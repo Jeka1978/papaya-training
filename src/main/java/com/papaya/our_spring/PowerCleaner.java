@@ -7,10 +7,16 @@ import java.util.Random;
 /**
  * @author Evgeny Borisov
  */
+@Benchmark
 public class PowerCleaner implements Cleaner {
 
     @InjectRandomInt(min = 3, max = 6)
     private int repeat;
+
+
+    public PowerCleaner() {
+        System.out.println("repeat = " + repeat);
+    }
 
     @Override
     public void clean() {

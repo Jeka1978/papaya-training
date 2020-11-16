@@ -1,14 +1,15 @@
 package com.papaya.our_spring;
 
-import com.papaya.heroes.RandomUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.reflections.Reflections;
 
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.*;
+import javax.annotation.PostConstruct;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Evgeny Borisov
@@ -39,10 +40,25 @@ public class ObjectFactory {
         T t = create(implClass);
 
 
-        objectConfigurators.forEach(objectConfigurator -> objectConfigurator.configure(t));
+        configure(t);
+
+        invokeInit(type, t);
 
 
         return t;
+    }
+
+    private <T> void invokeInit(Class<T> type, T t) throws IllegalAccessException, InvocationTargetException {
+        Method[] methods = type.getMethods();
+        for (Method method : methods) {
+            if (method.getName().startsWith("init") || method.isAnnotationPresent(PostConstruct.class)) {
+                method.invoke(t);
+            }
+        }
+    }
+
+    private <T> void configure(T t) {
+        objectConfigurators.forEach(objectConfigurator -> objectConfigurator.configure(t));
     }
 
     private <T> T create(Class<T> implClass) throws InstantiationException, IllegalAccessException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
@@ -50,7 +66,7 @@ public class ObjectFactory {
     }
 
     private <T> Class<T> resolveRealImpl(Class<T> type) {
-        Class<T> implClass=type;
+        Class<T> implClass = type;
         if (type.isInterface()) {
             implClass = config.getImplClass(type);
             if (implClass == null) {
