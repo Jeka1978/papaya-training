@@ -23,12 +23,17 @@ public class ObjectFactory {
     private Config config = new JavaHardcodedConfig(); //todo not cahnge it
     private Reflections scanner = new Reflections("com.papaya.our_spring");
     private List<ObjectConfigurator> objectConfigurators = new ArrayList<>();
+    private List<ProxyConfigurator> proxyConfigurators = new ArrayList<>();
 
     @SneakyThrows
     private ObjectFactory() {
         Set<Class<? extends ObjectConfigurator>> classes = scanner.getSubTypesOf(ObjectConfigurator.class);
         for (Class<? extends ObjectConfigurator> aClass : classes) {
             objectConfigurators.add(aClass.getDeclaredConstructor().newInstance());
+        }
+        Set<Class<? extends ProxyConfigurator>> classes2 = scanner.getSubTypesOf(ProxyConfigurator.class);
+        for (Class<? extends ProxyConfigurator> aClass : classes2) {
+            proxyConfigurators.add(aClass.getDeclaredConstructor().newInstance());
         }
 
     }
@@ -45,23 +50,9 @@ public class ObjectFactory {
         invokeInit(type, t);
         // t is an object from original and it is already totally configured
 
-        if (originalClass.isAnnotationPresent(Benchmark.class)) {
-            Object proxy = Proxy.
-                    newProxyInstance(originalClass.getClassLoader(), originalClass.getInterfaces(), new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            System.out.println("*******BENCHMARK Started "+method.getName()+" *******(");
-                            long start = System.nanoTime();
-                            Object retVal = method.invoke(t, args);
-                            long end = System.nanoTime();
-                            System.out.println(end-start);
-                            System.out.println("*******BENCHMARK ended"+method.getName()+" *******(");
-                            return retVal;
-                        }
-                    });
-            return (T) proxy;
+        for (ProxyConfigurator proxyConfigurator : proxyConfigurators) {
+            t = (T) proxyConfigurator.wrapWithProxyIfNeeded(t, originalClass);
         }
-
 
         return t;
     }
