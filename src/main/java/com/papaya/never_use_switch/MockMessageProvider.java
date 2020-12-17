@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
@@ -11,16 +12,17 @@ import java.util.Random;
 /**
  * @author Evgeny Borisov
  */
-@Component
+@Service
 public class MockMessageProvider {
 
     @Autowired
     private DistributionService distributionService;
 
-    private Faker faker = new Faker();
+    @Autowired
+    private Faker faker;
 
 
-    private List<String> msgTypes = List.of("sms", "whatsapp");
+    private List<String> msgTypes = List.of("sms", "whatsapp","telegram");
 
 
     @Scheduled(fixedDelay = 1000)

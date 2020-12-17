@@ -50,18 +50,17 @@ public class ObjectFactory {
         invokeInit(type, t);
         // t is an object from original and it is already totally configured
 
-        for (ProxyConfigurator proxyConfigurator : proxyConfigurators) {
-            t = (T) proxyConfigurator.wrapWithProxyIfNeeded(t, originalClass);
-        }
+        t = wrapWithProxyIfNeeded(originalClass, t);
 
         return t;
     }
 
-
-
-
-
-
+    private <T> T wrapWithProxyIfNeeded(Class<T> originalClass, T t) {
+        for (ProxyConfigurator proxyConfigurator : proxyConfigurators) {
+            t = (T) proxyConfigurator.wrapWithProxyIfNeeded(t, originalClass);
+        }
+        return t;
+    }
 
 
     private <T> void invokeInit(Class<T> type, T t) throws IllegalAccessException, InvocationTargetException {
