@@ -2,21 +2,22 @@ package com.papaya.never_use_switch;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Evgeny Borisov
  */
-@Component
-
-public class SmsMessageSender implements MessageSender {
+@Repository
+@Primary
+public class ViberMessageSender implements MessageSender {
     @Override
     public void send(Message message) {
-        //40 lines of code which send sms
-        System.out.println("sms was send with text: "+message.getText());
+        System.out.println(message.getText()+" sent by VIBER!!!!!!!!!!");
     }
 
     @Override
     public String myType() {
-        return "SMS";
+        return "VIBER";
     }
 }

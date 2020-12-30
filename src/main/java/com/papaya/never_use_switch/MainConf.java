@@ -1,11 +1,21 @@
 package com.papaya.never_use_switch;
 
 import com.github.javafaker.Faker;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Evgeny Borisov
@@ -14,6 +24,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan
 @EnableScheduling
 public class MainConf {
+
+//    @Bean
+//    public Map<String, MessageSender> senderMap(List<MessageSender> messageSenders) {
+//        return messageSenders.stream()
+//                .collect(toMap(MessageSender::myType, identity()));
+//    }
 
 
 
@@ -24,7 +40,7 @@ public class MainConf {
 
 
     public static void main(String[] args) {
-        new AnnotationConfigApplicationContext(MainConf.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MainConf.class);
     }
 }
 

@@ -22,7 +22,7 @@ public class MockMessageProvider {
     private Faker faker;
 
 
-    private List<String> msgTypes = List.of("sms", "whatsapp","telegram");
+    private List<String> msgTypes = List.of("SMS", "WHATSAPP","TELEGRAM","VIBER");
 
 
     @Scheduled(fixedDelay = 1000)
