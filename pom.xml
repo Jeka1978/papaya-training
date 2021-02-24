@@ -14,6 +14,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.papaya-starter-example</groupId>
+            <artifactId>demo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>2.3.3.RELEASE</version>
